@@ -1,25 +1,82 @@
-import logo from './logo.svg';
-import './App.css';
-
+import './App.css'
+import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom'
+import React from 'react'
+import Home from './pages/home/Home'
+import Gigs from './pages/gigs/Gigs'
+import Gig from './pages/gig/Gig'
+import Login from './pages/login/Login'
+import Register from './pages/register/Register'
+import Add from './pages/add/Add'
+import Orders from './pages/orders/Orders'
+import Messages from './pages/messages/Messages'
+import Message from './pages/message/Message'
+import MyGigs from './pages/myGigs/MyGigs'
+import Navbar from './component/navbar/Navbar'
+import Footer from './component/footer/Footer'
+import { GoogleOAuthProvider } from '@react-oauth/google'
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	const Layout = () => {
+		return (
+			<div className='app'>
+				<GoogleOAuthProvider clientId='908448360716-fk3f0spgnst2slj70lehjfmpacncvltd.apps.googleusercontent.com'>
+					<Navbar />
+					<Outlet />
+					<Footer />
+				</GoogleOAuthProvider>
+			</div>
+		)
+	}
+
+	const router = createBrowserRouter([
+		{
+			path: '/',
+			element: <Layout />,
+			children: [
+				{
+					path: '/',
+					element: <Home />,
+				},
+				{
+					path: '/gigs',
+					element: <Gigs />,
+				},
+				{
+					path: '/myGigs',
+					element: <MyGigs />,
+				},
+				{
+					path: '/orders',
+					element: <Orders />,
+				},
+				{
+					path: '/messages',
+					element: <Messages />,
+				},
+				{
+					path: '/message/:id',
+					element: <Message />,
+				},
+				{
+					path: '/add',
+					element: <Add />,
+				},
+				{
+					path: '/gig/:id',
+					element: <Gig />,
+				},
+				{
+					path: '/register',
+					element: <Register />,
+				},
+				{
+					path: '/login',
+					element: <Login />,
+				},
+			],
+		},
+	])
+
+	return <RouterProvider router={router} />
 }
 
-export default App;
+export default App

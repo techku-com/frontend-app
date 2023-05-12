@@ -6,16 +6,16 @@ function Gig() {
 		<div className='gig'>
 			<div className='container'>
 				<div className='left'>
-					<h1>I will create ai generated art for you</h1>
+					<h1>Makmur jaya elektronik</h1>
 					<div className='seller'>
 						<h2>About The Seller</h2>
 						<div className='user'>
 							<img
-								src='https://images.pexels.com/photos/720327/pexels-photo-720327.jpeg?auto=compress&cs=tinysrgb&w=1600'
+								src='https://images.pexels.com/photos/15369357/pexels-photo-15369357.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
 								alt=''
 							/>
 							<div className='info'>
-								<span>Anna Bell</span>
+								<span>Pascal Armano</span>
 								<div className='stars'>
 									<img
 										src='/img/star.png'
@@ -40,14 +40,13 @@ function Gig() {
 									<span>5</span>
 								</div>
 								<button>Contact Me</button>
-								
 							</div>
 						</div>
 						<div className='box'>
 							<div className='items'>
 								<div className='item'>
 									<span className='title'>From</span>
-									<span className='desc'>USA</span>
+									<span className='desc'>Depok</span>
 								</div>
 								<div className='item'>
 									<span className='title'>Member since</span>
@@ -68,10 +67,9 @@ function Gig() {
 							</div>
 							<hr />
 							<p>
-								My name is Anna, I enjoy creating AI generated art in my spare
-								time. I have a lot of experience using the AI program and that
-								means I know what to prompt the AI with to get a great and
-								incredibly detailed result.
+								My name is Pascal, I enjoy fixing and cleaning computer in my
+								spare time. I have a lot of experience and that means I know
+								what to get a great and incredibly detailed result.
 							</p>
 						</div>
 					</div>
@@ -269,13 +267,10 @@ function Gig() {
 				</div>
 				<div className='right'>
 					<div className='price'>
-						<h3>1 AI generated image</h3>
+						<h3>Service</h3>
 						<h2>$ 59.99</h2>
 					</div>
-					<p>
-						I will create a unique high quality AI generated image based on a
-						description that you give me
-					</p>
+					<p></p>
 					<div className='details'>
 						<div className='item'>
 							<img

@@ -93,7 +93,7 @@ export default function Navbar() {
     <>
       <Space style={{ height: "100%" }}>
         <h3 style={{ cursor: "pointer" }} onClick={() => navigate("/")}>
-          Brand Here
+          TechKu
         </h3>
         {currentUser && (
           <Menu

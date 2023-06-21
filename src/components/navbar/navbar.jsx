@@ -98,7 +98,7 @@ export default function Navbar() {
           style={{ cursor: "pointer" }}
           onClick={() => handleClickMenu({ key: "" })}
         >
-          Brand Here
+          TechKu
         </h3>
         {currentUser && (
           <Menu

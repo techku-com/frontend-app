@@ -1,7 +1,8 @@
-import { Descriptions, Image } from "antd";
+import { Image, Typography } from "antd";
 import React, { useState } from "react";
 
 export default function CardInfo({ image, title, text }) {
+  const { Title, Paragraph } = Typography;
   const [onHover, setOnHover] = useState(false);
 
   return (
@@ -21,9 +22,8 @@ export default function CardInfo({ image, title, text }) {
           opacity: onHover ? 0.6 : 1,
         }}
       />
-      <Descriptions title={title} style={{ fontSize: 16 }}>
-        <Descriptions.Item>{text}</Descriptions.Item>
-      </Descriptions>
+      <Title level={4}>{title}</Title>
+      <Paragraph ellipsis={{ rows: 5, expandable: true }}>{text}</Paragraph>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Menu, Space } from "antd";
 import {
@@ -13,6 +13,7 @@ import { ModalContext } from "../../context/provider/modal.provider";
 
 export default function Navbar() {
   const { setModalState } = useContext(ModalContext);
+  const [tabKey, setTabKey] = useState("");
 
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
@@ -24,6 +25,7 @@ export default function Navbar() {
   };
 
   const handleClickMenu = (event) => {
+    setTabKey(event.key);
     navigate(`/${event.key}`);
   };
 
@@ -92,12 +94,16 @@ export default function Navbar() {
   return (
     <>
       <Space style={{ height: "100%" }}>
-        <h3 style={{ cursor: "pointer" }} onClick={() => navigate("/")}>
+        <h3
+          style={{ cursor: "pointer" }}
+          onClick={() => handleClickMenu({ key: "" })}
+        >
           Brand Here
         </h3>
         {currentUser && (
           <Menu
             style={menuStyling}
+            selectedKeys={[tabKey]}
             mode="horizontal"
             items={
               currentUser.role === "CUSTOMER" ? customerMenuItem : techMenuItem

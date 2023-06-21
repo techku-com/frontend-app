@@ -17,8 +17,8 @@ export default function ClientApp() {
       <ConfigProvider>
         <ModalProvider>
           <App>
-            <Layout>
-              <GoogleOAuthProvider clientId="908448360716-fk3f0spgnst2slj70lehjfmpacncvltd.apps.googleusercontent.com">
+            <GoogleOAuthProvider clientId="908448360716-fk3f0spgnst2slj70lehjfmpacncvltd.apps.googleusercontent.com">
+              <Layout>
                 <Header
                   style={{
                     position: "sticky",
@@ -39,8 +39,7 @@ export default function ClientApp() {
                     flexDirection: "column",
                     justifyContent: "center",
                     alignItems: "center",
-                    height: "78vh",
-                    overflow: "auto",
+                    minHeight: "78vh",
                     backgroundColor: "#eeeeee",
                   }}
                 >
@@ -58,8 +57,8 @@ export default function ClientApp() {
                 >
                   <BottomNavbar />
                 </Footer>
-              </GoogleOAuthProvider>
-            </Layout>
+              </Layout>
+            </GoogleOAuthProvider>
             <ActionModal />
           </App>
         </ModalProvider>

@@ -10,8 +10,8 @@ export default function ActionModal() {
   const [form] = Form.useForm();
 
   const handleReset = () => {
-    form.resetFields();
     setModalState((prev) => ({ ...prev, state: false }));
+    form.resetFields();
   };
 
   const handleFinish = async () => {
@@ -33,7 +33,7 @@ export default function ActionModal() {
       }
     } else {
       try {
-        await usersRegistration(values);
+        await usersRegistration({ ...values, role: !!values.role });
         setIsLoading(false);
         setModalState((prev) => ({ ...prev, type: "Login" }));
         form.resetFields();
@@ -108,8 +108,8 @@ export default function ActionModal() {
             </Form.Item>
             <Form.Item name="role">
               <Radio.Group>
-                <Radio value={false}>Customer</Radio>
-                <Radio value={true}>Technician</Radio>
+                <Radio value={0}>Customer</Radio>
+                <Radio value={1}>Technician</Radio>
               </Radio.Group>
             </Form.Item>
           </>

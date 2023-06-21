@@ -17,24 +17,24 @@ const Home = () => {
   const [articles, setArticles] = useState([]);
   const [status, setStatus] = useState([]);
 
-  // useEffect(() => {
-  //   try {
-  //     (async () => {
-  //       const {
-  //         data: { data },
-  //       } = await homeArticles();
-  //       setArticles(data);
-  //     })();
-  //     (async () => {
-  //       const {
-  //         data: { data },
-  //       } = await homeStatus();
-  //       setStatus(data);
-  //     })();
-  //   } catch (error) {
-  //     console.log({ error });
-  //   }
-  // }, []);
+  useEffect(() => {
+    try {
+      (async () => {
+        const {
+          data: { data },
+        } = await homeArticles();
+        setArticles(data);
+      })();
+      // (async () => {
+      //   const {
+      //     data: { data },
+      //   } = await homeStatus();
+      //   setStatus(data);
+      // })();
+    } catch (error) {
+      console.log({ error });
+    }
+  }, []);
 
   return (
     <div style={{ height: "100%" }}>
@@ -46,9 +46,10 @@ const Home = () => {
         <section style={{ display: "flex", justifyContent: "center" }}>
           <Space direction="vertical" size="large" style={{ width: "80%" }}>
             <Row gutter={16}>
-              {cards.map((card) => {
+              {/* {cards.map((card) => { */}
+              {articles.map((card, idx) => {
                 return (
-                  <Col span={8} style={{ padding: 20 }} key={card.id}>
+                  <Col span={8} style={{ padding: 20 }} key={idx}>
                     <CardInfo
                       image={card.img || card.image}
                       title={card.title}
@@ -60,7 +61,7 @@ const Home = () => {
             </Row>
           </Space>
         </section>
-        <Divider />
+        {/* <Divider />
         <section style={{ display: "flex", justifyContent: "center" }}>
           <Space direction="vertical" size="large" style={{ width: "80%" }}>
             <Row gutter={16}>
@@ -73,7 +74,7 @@ const Home = () => {
               })}
             </Row>
           </Space>
-        </section>
+        </section> */}
         <Divider />
         <section
           style={{

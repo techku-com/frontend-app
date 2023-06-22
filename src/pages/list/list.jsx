@@ -108,7 +108,7 @@ export default function ListPage() {
       dataIndex: "status",
       key: "status",
       width: "10%",
-      render: (status) => ORDER_STATUS[status - 1].name,
+      render: (status) => ORDER_STATUS[status].name,
     },
     {
       title: "Taken By",
@@ -131,14 +131,14 @@ export default function ListPage() {
       render: (_, record) => (
         <Space>
           <Button
-            disabled={record.status !== ORDER_STATUS[0].value}
+            disabled={record.status !== ORDER_STATUS[1].value}
             onClick={() => handleShowCancelConfirm(record)}
           >
             Cancel
           </Button>
           <Button
             disabled={
-              record.status !== ORDER_STATUS[2].value ||
+              record.status !== ORDER_STATUS[3].value ||
               record.order_rating.rating
             }
             onClick={() => setShowRating({ state: true, data: record })}
@@ -174,7 +174,7 @@ export default function ListPage() {
       dataIndex: "status",
       key: "status",
       width: "10%",
-      render: (status) => ORDER_STATUS[status - 1].name,
+      render: (status) => ORDER_STATUS[status].name,
     },
     {
       title: "Rating",
@@ -188,7 +188,7 @@ export default function ListPage() {
       key: "action",
       render: (_, record) => (
         <Button
-          disabled={record.status === ORDER_STATUS[2].value}
+          disabled={record.status === ORDER_STATUS[3].value}
           onClick={() => handleFinishOrder(record)}
         >
           Finish Order

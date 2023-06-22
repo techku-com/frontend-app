@@ -1,0 +1,105 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/2.0/configuration-reference
+version: 2.1
+orbs:
+  node: circleci/node@5.1.0
+# Define a job to be invoked later in a workflow.
+# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
+jobs:
+  build_prod:
+    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
+    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+    machine:
+      image: ubuntu-2004:2022.07.1
+    environment:
+      ENV: dev
+    # Add steps to the job
+    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+    steps:
+      - checkout
+      - node/install:
+          install-yarn: false
+          node-version: '18.16'
+      - run:
+          name: "Install dependencies"
+          command: "npm ci --legacy-peer-deps"
+      - run:
+          name: "Build"
+          command: |
+            npm run build
+      - run:
+          name: "Build image"
+          command: |
+            docker build --tag $DOCKER_USERNAME/yosep-techku-com-frontend-apps:$CIRCLE_SHA1 .
+      - run:
+          name: "Login to Docker Registry"
+          command: "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
+      - run:
+          name: "Push image to Docker Registry"
+          command: |
+            docker push $DOCKER_USERNAME/yosep-techku-com-frontend-apps:$CIRCLE_SHA1
+  deploy_prod:
+    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
+    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+    machine:
+      image: ubuntu-2004:2022.07.1
+    resource_class: large
+    environment:
+      ENV: prod
+    # Add steps to the job
+    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "04:db:61:9e:d9:b4:6f:63:88:db:4a:4a:80:0b:f0:3f" # Contabo (SG)
+      - run:
+          name: "Login to Docker Registry"
+          command: "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
+      - run:
+          name: "Prepare Docker Context"
+          command: |
+            docker context create remote --docker "host=ssh://deploy@server.ephorize.org"
+      - run:
+          name: "Login to Docker Registry (on remote)"
+          command: |
+            docker --context remote login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+      - run:
+          name: "Stop existence Docker container"
+          command: |
+            docker --context remote stop yosep-techku-com-frontend-apps || true
+      - run:
+          name: "Remove existence Docker container"
+          command: |
+            docker --context remote rm yosep-techku-com-frontend-apps || true
+      - run:
+          name: "Deploy"
+          command: |
+            docker --context remote run -dit --restart=unless-stopped -p 127.0.0.1:13032:80 --name yosep-techku-com-frontend-apps $DOCKER_USERNAME/yosep-techku-com-frontend-apps:$CIRCLE_SHA1
+      - run:
+          name: "Logout"
+          command: |
+            docker --context remote logout
+      - run:
+          name: "Prune image"
+          command: |
+            docker --context remote image prune -f
+# Invoke jobs via workflows
+# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+workflows:
+  build-workflow:
+    jobs:
+      - build_prod:
+          context:
+            - container_image_registry
+          filters:
+            branches:
+              only:
+                - main
+      - deploy_prod:
+          context:
+            - container_image_registry
+          requires:
+            - build_prod
+          filters:
+            branches:
+              only: main

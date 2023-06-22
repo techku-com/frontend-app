@@ -15,6 +15,10 @@ import { usersOrder } from "../../apis/user-api";
 
 const ORDER_STATUS = [
   {
+    name: "Canceled",
+    value: 0,
+  },
+  {
     name: "Available",
     value: 1,
   },

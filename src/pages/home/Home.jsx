@@ -10,10 +10,9 @@ import {
 } from "@ant-design/icons";
 import CardImage from "../../components/card/card-image";
 import CardInfo from "../../components/card/card-info";
-import { cards, projects } from "../../data";
 import { homeArticles, homeStatus } from "../../apis/home-api";
 
-const Home = () => {
+export default function Home() {
   const [articles, setArticles] = useState([]);
   const [status, setStatus] = useState([]);
 
@@ -25,12 +24,12 @@ const Home = () => {
         } = await homeArticles();
         setArticles(data);
       })();
-      // (async () => {
-      //   const {
-      //     data: { data },
-      //   } = await homeStatus();
-      //   setStatus(data);
-      // })();
+      (async () => {
+        const {
+          data: { data },
+        } = await homeStatus();
+        setStatus(data);
+      })();
     } catch (error) {
       console.log({ error });
     }
@@ -62,19 +61,19 @@ const Home = () => {
           </Space>
         </section>
         {/* <Divider />
-        <section style={{ display: "flex", justifyContent: "center" }}>
-          <Space direction="vertical" size="large" style={{ width: "80%" }}>
-            <Row gutter={16}>
-              {projects.map((project) => {
-                return (
-                  <Col span={8} style={{ padding: 20 }} key={project.id}>
-                    <CardImage image={project.img} title={project.cat} />
-                  </Col>
-                );
-              })}
-            </Row>
-          </Space>
-        </section> */}
+            <section style={{ display: "flex", justifyContent: "center" }}>
+              <Space direction="vertical" size="large" style={{ width: "80%" }}>
+                <Row gutter={16}>
+                  {projects.map((project) => {
+                    return (
+                      <Col span={8} style={{ padding: 20 }} key={project.id}>
+                        <CardImage image={project.img} title={project.cat} />
+                      </Col>
+                    );
+                  })}
+                </Row>
+              </Space>
+            </section> */}
         <Divider />
         <section
           style={{
@@ -135,6 +134,4 @@ const Home = () => {
       </Space>
     </div>
   );
-};
-
-export default Home;
+}

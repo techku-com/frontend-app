@@ -3,13 +3,13 @@ import React, { useState } from "react";
 
 export default function CardInfo({ image, title, text }) {
   const { Title, Paragraph } = Typography;
-  const [onHover, setOnHover] = useState(false);
+  // const [onHover, setOnHover] = useState(false);
 
   return (
     <div
       style={{ overflow: "hidden" }}
-      onMouseOver={() => setOnHover(true)}
-      onMouseOut={() => setOnHover(false)}
+      // onMouseOver={() => setOnHover(true)}
+      // onMouseOut={() => setOnHover(false)}
     >
       <Image
         src={image}
@@ -19,7 +19,7 @@ export default function CardInfo({ image, title, text }) {
           width: 500,
           objectFit: "cover",
           marginBottom: 40,
-          opacity: onHover ? 0.6 : 1,
+          // opacity: onHover ? 0.6 : 1,
         }}
       />
       <Title level={4}>{title}</Title>

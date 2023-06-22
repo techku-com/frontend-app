@@ -1,5 +1,5 @@
-import React, { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Menu, Space } from "antd";
 import {
   UserOutlined,
@@ -8,10 +8,12 @@ import {
   UserAddOutlined,
   PlusOutlined,
   UnorderedListOutlined,
+  OrderedListOutlined,
 } from "@ant-design/icons";
 import { ModalContext } from "../../context/provider/modal.provider";
 
 export default function Navbar() {
+  const location = useLocation();
   const { setModalState } = useContext(ModalContext);
   const [tabKey, setTabKey] = useState("");
 
@@ -25,7 +27,6 @@ export default function Navbar() {
   };
 
   const handleClickMenu = (event) => {
-    setTabKey(event.key);
     navigate(`/${event.key}`);
   };
 
@@ -34,7 +35,7 @@ export default function Navbar() {
   };
 
   const menuStyling = {
-    width: 250,
+    width: 300,
     height: "10vh",
     display: "flex",
     justifyContent: "end",
@@ -45,6 +46,11 @@ export default function Navbar() {
   const techMenuItem = [
     {
       label: "Order List",
+      key: "tech-list",
+      icon: <OrderedListOutlined />,
+    },
+    {
+      label: "My Order",
       key: "list",
       icon: <UnorderedListOutlined />,
     },
@@ -90,6 +96,10 @@ export default function Navbar() {
       icon: <UserAddOutlined />,
     },
   ];
+
+  useEffect(() => {
+    setTabKey(location.pathname.substring(1));
+  }, [location, location.pathname]);
 
   return (
     <>

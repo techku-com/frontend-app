@@ -1,17 +1,6 @@
-import {
-  App,
-  Button,
-  Form,
-  Input,
-  List,
-  Modal,
-  Rate,
-  Skeleton,
-  Space,
-  Table,
-} from "antd";
+import { App, Button, Form, Input, Modal, Rate, Space, Table } from "antd";
 import React, { useEffect, useState } from "react";
-import { ordersList, ordersRate } from "../../apis/order-api";
+import { ordersRate, ordersUpdate } from "../../apis/order-api";
 import { usersOrder } from "../../apis/user-api";
 
 const ORDER_STATUS = [
@@ -37,6 +26,28 @@ export default function ListPage() {
   const [form] = Form.useForm();
 
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+  const requestMyOrder = async (id) => {
+    setLoading(true);
+    try {
+      const {
+        data: { data },
+      } = await usersOrder(id);
+      setLoading(false);
+      setList(data);
+    } catch (error) {
+      console.log({ error });
+    }
+  };
+
+  const requestUpdateOrder = async (body) => {
+    try {
+      await ordersUpdate(body);
+      requestMyOrder(currentUser.user_id);
+    } catch (error) {
+      console.log({ error });
+    }
+  };
 
   const CUSTOMER_HEADER = [
     {
@@ -84,8 +95,16 @@ export default function ListPage() {
       width: "15%",
       render: (_, record) => (
         <Space>
-          <Button onClick={handleShowCancelConfirm}>Cancel</Button>
-          <Button onClick={() => setShowRating({ state: true, data: record })}>
+          <Button
+            disabled={record.status !== ORDER_STATUS[0].value}
+            onClick={() => handleShowCancelConfirm(record)}
+          >
+            Cancel
+          </Button>
+          <Button
+            disabled={record.status !== ORDER_STATUS[2].value}
+            onClick={() => setShowRating({ state: true, data: record })}
+          >
             Rate
           </Button>
         </Space>
@@ -96,48 +115,62 @@ export default function ListPage() {
   const TECH_HEADER = [
     {
       title: "Name",
-      dataIndex: "created_by",
+      dataIndex: "created_by_name",
+      key: "created_by",
       width: "15%",
     },
     {
       title: "Issues",
       dataIndex: "issues",
+      key: "issues",
       width: "25%",
     },
     {
-      title: "Address",
-      dataIndex: "address",
-      width: "40%",
+      title: "Created At",
+      dataIndex: "created_at",
+      key: "created_at",
+      width: "15%",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      width: "10%",
+      render: (status) => ORDER_STATUS[status - 1].name,
+    },
+    {
+      title: "Rating",
+      dataIndex: "order_rating",
+      key: "rating",
+      width: "15%",
+      render: (rate) => <Rate disabled count={6} defaultValue={rate.rating} />,
     },
     {
       title: "Action",
       key: "action",
-      width: "20%",
       render: (_, record) => (
-        <Space>
-          {record.status === ORDER_STATUS[0].value && (
-            <Button onClick={() => handleTakeOrder(record)}>Take Order</Button>
-          )}
-          {record.status === ORDER_STATUS[1].value && (
-            <Button onClick={() => handleFinishOrder(record)}>
-              Finish Order
-            </Button>
-          )}
-        </Space>
+        <Button
+          disabled={record.status === ORDER_STATUS[2].value}
+          onClick={() => handleFinishOrder(record)}
+        >
+          Finish Order
+        </Button>
       ),
     },
   ];
 
   const handleShowCancelConfirm = (data) => {
-    console.log({ data });
     modal.confirm({
       title: "Do you want to cancel this order?",
       centered: true,
       onOk() {
-        console.log("OK");
-      },
-      onCancel() {
-        console.log("cancel");
+        const bodyRequest = {
+          order_id: data.order_id,
+          user_id: data.created_by,
+          taken_by: currentUser.user_id,
+          new_status: 0,
+        };
+        requestUpdateOrder(bodyRequest);
       },
     });
   };
@@ -153,57 +186,28 @@ export default function ListPage() {
     };
 
     try {
-      setShowRating(false);
       await ordersRate(respBody);
+      setShowRating(false);
       form.resetFields();
-    } catch (error) {
-      console.log({ error });
-    }
-  };
-
-  const handleTakeOrder = (data) => {
-    try {
-      console.log({ data });
+      requestMyOrder(currentUser.user_id);
     } catch (error) {
       console.log({ error });
     }
   };
 
   const handleFinishOrder = (data) => {
-    try {
-      console.log({ data });
-    } catch (error) {
-      console.log({ error });
-    }
+    const bodyRequest = {
+      order_id: data.order_id,
+      user_id: data.created_by,
+      taken_by: currentUser.user_id,
+      new_status: data.status + 1,
+    };
+    requestUpdateOrder(bodyRequest);
   };
 
   useEffect(() => {
-    if (currentUser.role === "CUSTOMER") {
-      try {
-        (async () => {
-          const {
-            data: { data },
-          } = await usersOrder(currentUser.user_id);
-          setLoading(false);
-          setList(data);
-        })();
-      } catch (error) {
-        console.log({ error });
-      }
-    } else {
-      try {
-        (async () => {
-          const {
-            data: { data },
-          } = await ordersList();
-          setLoading(false);
-          setList(data);
-        })();
-      } catch (error) {
-        console.log({ error });
-      }
-    }
-  }, [currentUser.role, currentUser.user_id]);
+    requestMyOrder(currentUser.user_id);
+  }, [currentUser.user_id]);
 
   return (
     <App>
@@ -216,8 +220,7 @@ export default function ListPage() {
           currentUser.role === "CUSTOMER" ? CUSTOMER_HEADER : TECH_HEADER
         }
         dataSource={list}
-        style={{ width: "70vw", height: "70vh" }}
-        // scroll={{ y: "70vh" }}
+        style={{ width: "70vw", height: "100%" }}
       />
       <Modal
         title="Give Rate"

@@ -31,10 +31,10 @@ export default function AddPage() {
         onFinish={handleSubmitOrder}
       >
         <Form.Item label="Issue" name="issues">
-          <Input />
+          <Input.TextArea rows={5} />
         </Form.Item>
         <Form.Item label="Address" name="address">
-          <Input.TextArea rows={4} />
+          <Input.TextArea rows={3} />
         </Form.Item>
         <Form.Item style={{ display: "flex", justifyContent: "end" }}>
           <Button type="primary" htmlType="submit" loading={loading}>

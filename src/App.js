@@ -1,82 +1,91 @@
-import './App.css'
-import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom'
-import React from 'react'
-import Home from './pages/home/Home'
-import Gigs from './pages/gigs/Gigs'
-import Gig from './pages/gig/Gig'
-import Login from './pages/login/Login'
-import Register from './pages/register/Register'
-import Add from './pages/add/Add'
-import Orders from './pages/orders/Orders'
-import Messages from './pages/messages/Messages'
-import Message from './pages/message/Message'
-import MyGigs from './pages/myGigs/MyGigs'
-import Navbar from './component/navbar/Navbar'
-import Footer from './component/footer/Footer'
-import { GoogleOAuthProvider } from '@react-oauth/google'
-function App() {
-	const Layout = () => {
-		return (
-			<div className='app'>
-				<GoogleOAuthProvider clientId='908448360716-fk3f0spgnst2slj70lehjfmpacncvltd.apps.googleusercontent.com'>
-					<Navbar />
-					<Outlet />
-					<Footer />
-				</GoogleOAuthProvider>
-			</div>
-		)
-	}
+import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { App, ConfigProvider, Layout } from "antd";
+import React from "react";
+import ModalProvider from "./context/provider/modal.provider";
+import ActionModal from "./components/modal/action-modal";
+import Navbar from "./components/navbar/navbar";
+import BottomNavbar from "./components/footer/footer";
+import Home from "./pages/home/Home";
+import AddPage from "./pages/add/add";
+import ListPage from "./pages/list/list";
 
-	const router = createBrowserRouter([
-		{
-			path: '/',
-			element: <Layout />,
-			children: [
-				{
-					path: '/',
-					element: <Home />,
-				},
-				{
-					path: '/gigs',
-					element: <Gigs />,
-				},
-				{
-					path: '/myGigs',
-					element: <MyGigs />,
-				},
-				{
-					path: '/orders',
-					element: <Orders />,
-				},
-				{
-					path: '/messages',
-					element: <Messages />,
-				},
-				{
-					path: '/message/:id',
-					element: <Message />,
-				},
-				{
-					path: '/add',
-					element: <Add />,
-				},
-				{
-					path: '/gig/:id',
-					element: <Gig />,
-				},
-				{
-					path: '/register',
-					element: <Register />,
-				},
-				{
-					path: '/login',
-					element: <Login />,
-				},
-			],
-		},
-	])
+export default function ClientApp() {
+  const PageLayout = () => {
+    const { Header, Content, Footer } = Layout;
+    return (
+      <ConfigProvider>
+        <ModalProvider>
+          <App>
+            <GoogleOAuthProvider clientId="908448360716-fk3f0spgnst2slj70lehjfmpacncvltd.apps.googleusercontent.com">
+              <Layout>
+                <Header
+                  style={{
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 1,
+                    height: "10vh",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    backgroundColor: "whitesmoke",
+                  }}
+                >
+                  <Navbar />
+                </Header>
+                <Content
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    minHeight: "78vh",
+                    backgroundColor: "#eeeeee",
+                  }}
+                >
+                  <Outlet />
+                </Content>
+                <Footer
+                  style={{
+                    padding: "0 50px",
+                    height: "10vh",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: "whitesmoke",
+                  }}
+                >
+                  <BottomNavbar />
+                </Footer>
+              </Layout>
+            </GoogleOAuthProvider>
+            <ActionModal />
+          </App>
+        </ModalProvider>
+      </ConfigProvider>
+    );
+  };
 
-	return <RouterProvider router={router} />
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <PageLayout />,
+      children: [
+        {
+          path: "/",
+          element: <Home />,
+        },
+        {
+          path: "/add",
+          element: <AddPage />,
+        },
+        {
+          path: "/list",
+          element: <ListPage />,
+        },
+      ],
+    },
+  ]);
+
+  return <RouterProvider router={router} />;
 }
-
-export default App

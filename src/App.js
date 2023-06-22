@@ -7,7 +7,7 @@ import ActionModal from "./components/modal/action-modal";
 import Navbar from "./components/navbar/navbar";
 import BottomNavbar from "./components/footer/footer";
 import Home from "./pages/home/Home";
-import AddPage from "./pages/add/add";
+import AddPage from "./pages/add/Add";
 import ListPage from "./pages/list/list";
 
 export default function ClientApp() {

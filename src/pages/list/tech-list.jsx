@@ -71,7 +71,7 @@ export default function TechListPage() {
       order_id: data.order_id,
       user_id: data.created_by_id,
       taken_by: currentUser.user_id,
-      new_status: data.status + 1,
+      new_status: 2,
     };
 
     try {
@@ -92,7 +92,7 @@ export default function TechListPage() {
         bordered
         loading={loading}
         pagination={false}
-        rowKey={(record) => `${record.created_by}-${record.issues}`}
+        rowKey={(record) => record.order_id}
         columns={TECH_HEADER}
         dataSource={list}
         style={{ width: "70vw", height: "100%" }}

@@ -238,7 +238,7 @@ export default function ListPage() {
       order_id: data.order_id,
       user_id: data.created_by,
       taken_by: currentUser.user_id,
-      new_status: data.status + 1,
+      new_status: 3,
     };
     requestUpdateOrder(bodyRequest);
   };
@@ -253,7 +253,7 @@ export default function ListPage() {
         bordered
         loading={loading}
         pagination={false}
-        rowKey={(record) => `${record.created_by}-${record.issues}`}
+        rowKey={(record) => record.order_id}
         columns={
           currentUser.role === "CUSTOMER" ? CUSTOMER_HEADER : TECH_HEADER
         }

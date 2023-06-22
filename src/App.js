@@ -6,8 +6,8 @@ import ModalProvider from "./context/provider/modal.provider";
 import ActionModal from "./components/modal/action-modal";
 import Navbar from "./components/navbar/navbar";
 import BottomNavbar from "./components/footer/footer";
-import Home from "./pages/home/Home";
-import AddPage from "./pages/add/Add";
+import Home from "./pages/home/home";
+import AddPage from "./pages/add/add";
 import ListPage from "./pages/list/list";
 import TechListPage from "./pages/list/tech-list";
 

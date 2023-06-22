@@ -1,13 +1,43 @@
 import React, { useContext, useState } from "react";
 import { ModalContext } from "../../context/provider/modal.provider";
-import { Form, Input, Modal, Radio } from "antd";
+import { Form, Input, Modal, Radio, message } from "antd";
 import { usersLogin, usersRegistration } from "../../apis/user-api";
 
 export default function ActionModal() {
   const { modalState, setModalState } = useContext(ModalContext);
-
+  const [messageApi, contextHolder] = message.useMessage();
   const [isLoading, setIsLoading] = useState(false);
   const [form] = Form.useForm();
+
+  const successMessage = () => {
+    messageApi
+      .open({
+        type: "loading",
+        content: "Loading",
+        duration: 2.5,
+      })
+      .then(message.success(`${modalState.type} Success`, 2.5))
+      .then(
+        setModalState((prev) => ({
+          ...prev,
+          type: modalState.type === "Login" ? prev.type : "Login",
+          state: modalState.type === "Login" ? false : prev.state,
+        }))
+      )
+      .then(setIsLoading(false))
+      .then(form.resetFields());
+  };
+
+  const errorMessage = () => {
+    messageApi
+      .open({
+        type: "loading",
+        content: "Loading",
+        duration: 2.5,
+      })
+      .then(message.error(`${modalState.type} Error`, 2.5))
+      .then(setIsLoading(false));
+  };
 
   const handleReset = () => {
     setModalState((prev) => ({ ...prev, state: false }));
@@ -23,23 +53,17 @@ export default function ActionModal() {
         const {
           data: { data },
         } = await usersLogin(values);
-        setIsLoading(false);
-        setModalState((prev) => ({ ...prev, state: false }));
+        successMessage();
         localStorage.setItem("currentUser", JSON.stringify(data));
-        form.resetFields();
       } catch (error) {
-        console.log({ error });
-        setIsLoading(false);
+        errorMessage();
       }
     } else {
       try {
         await usersRegistration({ ...values, role: !!values.role });
-        setIsLoading(false);
-        setModalState((prev) => ({ ...prev, type: "Login" }));
-        form.resetFields();
+        successMessage();
       } catch (error) {
-        console.log({ error });
-        setIsLoading(false);
+        errorMessage();
       }
     }
   };
@@ -115,6 +139,7 @@ export default function ActionModal() {
           </>
         )}
       </Form>
+      {contextHolder}
     </Modal>
   );
 }

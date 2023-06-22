@@ -1,12 +1,34 @@
-import { App, Button, Table } from "antd";
+import { App, Button, Table, message } from "antd";
 import React, { useEffect, useState } from "react";
 import { ordersList, ordersUpdate } from "../../apis/order-api";
 
 export default function TechListPage() {
   const [loading, setLoading] = useState(true);
   const [list, setList] = useState([]);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+  const successMessage = () => {
+    messageApi
+      .open({
+        type: "loading",
+        content: "Loading",
+        duration: 2.5,
+      })
+      .then(message.success("Take Order Success", 2.5))
+      .then(requestTechList());
+  };
+
+  const errorMessage = () => {
+    messageApi
+      .open({
+        type: "loading",
+        content: "Loading",
+        duration: 2.5,
+      })
+      .then(message.error("Take Order Error", 2.5));
+  };
 
   const requestTechList = async () => {
     setLoading(true);
@@ -16,9 +38,7 @@ export default function TechListPage() {
       } = await ordersList();
       setLoading(false);
       setList(data);
-    } catch (error) {
-      console.log({ error });
-    }
+    } catch (error) {}
   };
 
   const TECH_HEADER = [
@@ -56,9 +76,9 @@ export default function TechListPage() {
 
     try {
       await ordersUpdate(bodyRequest);
-      requestTechList();
+      successMessage();
     } catch (error) {
-      console.log({ error });
+      errorMessage();
     }
   };
 
@@ -77,6 +97,7 @@ export default function TechListPage() {
         dataSource={list}
         style={{ width: "70vw", height: "100%" }}
       />
+      {contextHolder}
     </App>
   );
 }

@@ -1,4 +1,14 @@
-import { App, Button, Form, Input, Modal, Rate, Space, Table } from "antd";
+import {
+  App,
+  Button,
+  Form,
+  Input,
+  Modal,
+  Rate,
+  Space,
+  Table,
+  message,
+} from "antd";
 import React, { useEffect, useState } from "react";
 import { ordersRate, ordersUpdate } from "../../apis/order-api";
 import { usersOrder } from "../../apis/user-api";
@@ -23,9 +33,31 @@ export default function ListPage() {
   const [loading, setLoading] = useState(true);
   const [list, setList] = useState([]);
   const [showRating, setShowRating] = useState({ state: false, data: {} });
+  const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
 
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+  const successMessage = (text) => {
+    messageApi
+      .open({
+        type: "loading",
+        content: "Loading",
+        duration: 2.5,
+      })
+      .then(form.resetFields())
+      .then(message.success(text, 2.5));
+  };
+
+  const errorMessage = (text) => {
+    messageApi
+      .open({
+        type: "loading",
+        content: "Loading",
+        duration: 2.5,
+      })
+      .then(message.error(text, 2.5));
+  };
 
   const requestMyOrder = async (id) => {
     setLoading(true);
@@ -35,17 +67,16 @@ export default function ListPage() {
       } = await usersOrder(id);
       setLoading(false);
       setList(data);
-    } catch (error) {
-      console.log({ error });
-    }
+    } catch (error) {}
   };
 
   const requestUpdateOrder = async (body) => {
     try {
       await ordersUpdate(body);
       requestMyOrder(currentUser.user_id);
+      successMessage("Update Order Success");
     } catch (error) {
-      console.log({ error });
+      errorMessage("Update Order Error");
     }
   };
 
@@ -102,7 +133,10 @@ export default function ListPage() {
             Cancel
           </Button>
           <Button
-            disabled={record.status !== ORDER_STATUS[2].value}
+            disabled={
+              record.status !== ORDER_STATUS[2].value ||
+              record.order_rating.rating
+            }
             onClick={() => setShowRating({ state: true, data: record })}
           >
             Rate
@@ -239,6 +273,7 @@ export default function ListPage() {
           </Form.Item>
         </Form>
       </Modal>
+      {contextHolder}
     </App>
   );
 }

@@ -1,12 +1,34 @@
 import React, { useState } from "react";
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, message } from "antd";
 import { ordersCreate } from "../../apis/order-api";
 
 export default function AddPage() {
   const [form] = Form.useForm();
+  const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState(false);
 
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+  const successMessage = () => {
+    messageApi
+      .open({
+        type: "loading",
+        content: "Loading",
+        duration: 2.5,
+      })
+      .then(form.resetFields())
+      .then(message.success("Add Order Success", 2.5));
+  };
+
+  const errorMessage = () => {
+    messageApi
+      .open({
+        type: "loading",
+        content: "Loading",
+        duration: 2.5,
+      })
+      .then(message.error("Add Order Error", 2.5));
+  };
 
   const handleSubmitOrder = async () => {
     const values = form.getFieldsValue();
@@ -15,8 +37,9 @@ export default function AddPage() {
     try {
       await ordersCreate({ ...values, user_id: currentUser.user_id });
       setLoading(false);
+      successMessage();
     } catch (error) {
-      console.log({ error });
+      errorMessage();
     }
   };
 
@@ -42,6 +65,7 @@ export default function AddPage() {
           </Button>
         </Form.Item>
       </Form>
+      {contextHolder}
     </>
   );
 }

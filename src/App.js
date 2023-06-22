@@ -6,9 +6,10 @@ import ModalProvider from "./context/provider/modal.provider";
 import ActionModal from "./components/modal/action-modal";
 import Navbar from "./components/navbar/navbar";
 import BottomNavbar from "./components/footer/footer";
-import Home from "./pages/home/Home";
+import Home from "./pages/home/home";
 import AddPage from "./pages/add/add";
 import ListPage from "./pages/list/list";
+import TechListPage from "./pages/list/tech-list";
 
 export default function ClientApp() {
   const PageLayout = () => {
@@ -23,6 +24,7 @@ export default function ClientApp() {
                   style={{
                     position: "sticky",
                     top: 0,
+                    left: 0,
                     zIndex: 1,
                     height: "10vh",
                     display: "flex",
@@ -39,7 +41,7 @@ export default function ClientApp() {
                     flexDirection: "column",
                     justifyContent: "center",
                     alignItems: "center",
-                    minHeight: "78vh",
+                    minHeight: "77vh",
                     backgroundColor: "#eeeeee",
                   }}
                 >
@@ -82,6 +84,10 @@ export default function ClientApp() {
         {
           path: "/list",
           element: <ListPage />,
+        },
+        {
+          path: "/tech-list",
+          element: <TechListPage />,
         },
       ],
     },

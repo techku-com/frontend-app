@@ -118,6 +118,13 @@ export default function ListPage() {
       render: (name) => name || "-",
     },
     {
+      title: "Technician Phone Number",
+      dataIndex: "technician_phone",
+      key: "technician_phone",
+      width: "14%",
+      render: (name) => name || "-",
+    },
+    {
       title: "Rating",
       dataIndex: "order_rating",
       key: "rating",
@@ -155,6 +162,12 @@ export default function ListPage() {
       title: "Name",
       dataIndex: "created_by_name",
       key: "created_by",
+      width: "15%",
+    },
+    {
+      title: "Customer Number",
+      dataIndex: "customer_phone",
+      key: "customer_phone",
       width: "15%",
     },
     {

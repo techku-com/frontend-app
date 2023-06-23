@@ -58,6 +58,11 @@ export default function TechListPage() {
       width: "35%",
     },
     {
+      title: "Customer Phone",
+      dataIndex: "phone_number",
+      width: "35%",
+    },
+    {
       title: "Action",
       key: "action",
       render: (_, record) => (

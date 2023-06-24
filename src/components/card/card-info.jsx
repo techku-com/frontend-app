@@ -1,16 +1,11 @@
 import { Image, Typography } from "antd";
-import React, { useState } from "react";
+import React from "react";
 
 export default function CardInfo({ image, title, text }) {
   const { Title, Paragraph } = Typography;
-  // const [onHover, setOnHover] = useState(false);
 
   return (
-    <div
-      style={{ overflow: "hidden" }}
-      // onMouseOver={() => setOnHover(true)}
-      // onMouseOut={() => setOnHover(false)}
-    >
+    <div style={{ overflow: "hidden" }}>
       <Image
         src={image}
         preview={false}
@@ -18,8 +13,6 @@ export default function CardInfo({ image, title, text }) {
           height: 300,
           width: 500,
           objectFit: "cover",
-          marginBottom: 40,
-          // opacity: onHover ? 0.6 : 1,
         }}
       />
       <Title level={4}>{title}</Title>

@@ -22,7 +22,8 @@ export default function Home() {
         const {
           data: { data },
         } = await homeArticles();
-        setArticles(data);
+        const sliceData = data.slice(0, 3);
+        setArticles(sliceData);
       })();
       (async () => {
         const {
@@ -45,7 +46,6 @@ export default function Home() {
         <section style={{ display: "flex", justifyContent: "center" }}>
           <Space direction="vertical" size="large" style={{ width: "80%" }}>
             <Row gutter={16}>
-              {/* {cards.map((card) => { */}
               {articles.map((card, idx) => {
                 return (
                   <Col span={8} style={{ padding: 20 }} key={idx}>

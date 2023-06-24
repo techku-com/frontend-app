@@ -3,13 +3,16 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { App, ConfigProvider, Layout } from "antd";
 import React from "react";
 import ModalProvider from "./context/provider/modal.provider";
+import ArticleProvider from "./context/provider/article.provider";
 import ActionModal from "./components/modal/action-modal";
 import Navbar from "./components/navbar/navbar";
 import BottomNavbar from "./components/footer/footer";
-import Home from "./pages/home/Home";
-import AddPage from "./pages/add/Add";
+import Home from "./pages/home/home";
+import AddPage from "./pages/add/add";
 import ListPage from "./pages/list/list";
 import TechListPage from "./pages/list/tech-list";
+import Article from "./pages/articles/article";
+import ArticleList from "./pages/articles/article-list";
 
 export default function ClientApp() {
   const PageLayout = () => {
@@ -35,18 +38,20 @@ export default function ClientApp() {
                 >
                   <Navbar />
                 </Header>
-                <Content
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    minHeight: "77vh",
-                    backgroundColor: "#eeeeee",
-                  }}
-                >
-                  <Outlet />
-                </Content>
+                <ArticleProvider>
+                  <Content
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      minHeight: "77vh",
+                      backgroundColor: "#eeeeee",
+                    }}
+                  >
+                    <Outlet />
+                  </Content>
+                </ArticleProvider>
                 <Footer
                   style={{
                     padding: "0 50px",
@@ -76,6 +81,14 @@ export default function ClientApp() {
         {
           path: "/",
           element: <Home />,
+        },
+        {
+          path: "/article",
+          element: <ArticleList />,
+        },
+        {
+          path: "/article/:id",
+          element: <Article />,
         },
         {
           path: "/add",

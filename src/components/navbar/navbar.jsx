@@ -9,6 +9,7 @@ import {
   PlusOutlined,
   UnorderedListOutlined,
   OrderedListOutlined,
+  BookOutlined,
 } from "@ant-design/icons";
 import { ModalContext } from "../../context/provider/modal.provider";
 
@@ -36,7 +37,6 @@ export default function Navbar() {
 
   const menuStyling = {
     width: 300,
-    height: "10vh",
     display: "flex",
     justifyContent: "end",
     alignItems: "center",
@@ -110,6 +110,25 @@ export default function Navbar() {
         >
           TechKu
         </h3>
+        <Menu
+          style={{
+            width: 150,
+            display: "flex",
+            justifyContent: "end",
+            alignItems: "center",
+            backgroundColor: "whitesmoke",
+          }}
+          selectedKeys={[tabKey]}
+          mode="horizontal"
+          items={[
+            {
+              label: "Article",
+              key: "article",
+              icon: <BookOutlined />,
+            },
+          ]}
+          onClick={handleClickMenu}
+        />
         {currentUser && (
           <Menu
             style={menuStyling}

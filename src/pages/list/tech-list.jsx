@@ -100,7 +100,7 @@ export default function TechListPage() {
         rowKey={(record) => record.order_id}
         columns={TECH_HEADER}
         dataSource={list}
-        style={{ width: "70vw", height: "100%" }}
+        style={{ width: "80vw", height: "100%" }}
       />
       {contextHolder}
     </App>

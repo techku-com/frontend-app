@@ -3,6 +3,7 @@ import {
   Button,
   Form,
   Input,
+  InputNumber,
   Modal,
   Rate,
   Space,
@@ -37,8 +38,14 @@ export default function ListPage() {
   const [loading, setLoading] = useState(true);
   const [list, setList] = useState([]);
   const [showRating, setShowRating] = useState({ state: false, data: {} });
+  const [showPrice, setShowPrice] = useState({
+    state: false,
+    data: {},
+    isReadOnly: false,
+  });
   const [messageApi, contextHolder] = message.useMessage();
-  const [form] = Form.useForm();
+  const [rateForm] = Form.useForm();
+  const [priceForm] = Form.useForm();
 
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
@@ -49,7 +56,6 @@ export default function ListPage() {
         content: "Loading",
         duration: 2.5,
       })
-      .then(form.resetFields())
       .then(message.success(text, 2.5));
   };
 
@@ -135,25 +141,28 @@ export default function ListPage() {
       title: "Action",
       key: "action",
       width: "15%",
-      render: (_, record) => (
-        <Space>
-          <Button
-            disabled={record.status !== ORDER_STATUS[1].value}
-            onClick={() => handleShowCancelConfirm(record)}
-          >
-            Cancel
-          </Button>
-          <Button
-            disabled={
-              record.status !== ORDER_STATUS[3].value ||
-              record.order_rating.rating
-            }
-            onClick={() => setShowRating({ state: true, data: record })}
-          >
-            Rate
-          </Button>
-        </Space>
-      ),
+      render: (_, record) =>
+        record.status === ORDER_STATUS[3].value ? (
+          <Button onClick={() => handleShowDetail(record)}>Detail</Button>
+        ) : (
+          <Space>
+            <Button
+              disabled={record.status !== ORDER_STATUS[1].value}
+              onClick={() => handleShowCancelConfirm(record)}
+            >
+              Cancel
+            </Button>
+            <Button
+              disabled={
+                record.status !== ORDER_STATUS[3].value ||
+                record.order_rating.rating
+              }
+              onClick={() => setShowRating({ state: true, data: record })}
+            >
+              Rate
+            </Button>
+          </Space>
+        ),
     },
   ];
 
@@ -202,13 +211,21 @@ export default function ListPage() {
       render: (_, record) => (
         <Button
           disabled={record.status === ORDER_STATUS[3].value}
-          onClick={() => handleFinishOrder(record)}
+          onClick={() => handleOpenFinishOrder(record)}
         >
           Finish Order
         </Button>
       ),
     },
   ];
+
+  const handleShowDetail = (data) => {
+    priceForm.setFieldsValue({
+      price: data.price,
+      description: data.description,
+    });
+    setShowPrice({ state: true, data, isReadOnly: true });
+  };
 
   const handleShowCancelConfirm = (data) => {
     modal.confirm({
@@ -227,7 +244,7 @@ export default function ListPage() {
   };
 
   const handleSubmitRate = async () => {
-    const values = form.getFieldsValue();
+    const values = rateForm.getFieldsValue();
     const { order_id, taken_by } = showRating.data;
     const respBody = {
       ...values,
@@ -239,21 +256,30 @@ export default function ListPage() {
     try {
       await ordersRate(respBody);
       setShowRating(false);
-      form.resetFields();
+      rateForm.resetFields();
       requestMyOrder(currentUser.user_id);
     } catch (error) {
       console.log({ error });
     }
   };
 
-  const handleFinishOrder = (data) => {
+  const handleOpenFinishOrder = (data) => {
+    setShowPrice({ state: true, data, isReadOnly: false });
+  };
+
+  const handleSubmitFinishOrder = () => {
+    const values = priceForm.getFieldsValue();
+    const { data } = showPrice;
     const bodyRequest = {
       order_id: data.order_id,
       user_id: data.created_by,
       taken_by: currentUser.user_id,
       new_status: 3,
+      price: values.price,
+      description: values.description,
     };
     requestUpdateOrder(bodyRequest);
+    setShowPrice({ state: false, data: {}, isReadOnly: false });
   };
 
   useEffect(() => {
@@ -271,7 +297,7 @@ export default function ListPage() {
           currentUser.role === "CUSTOMER" ? CUSTOMER_HEADER : TECH_HEADER
         }
         dataSource={list}
-        style={{ width: "70vw", height: "100%" }}
+        style={{ width: "80vw", height: "100%" }}
       />
       <Modal
         title="Give Rate"
@@ -279,14 +305,77 @@ export default function ListPage() {
         open={showRating.state}
         okText={"Submit"}
         onOk={handleSubmitRate}
-        onCancel={() => setShowRating(false)}
+        onCancel={() => setShowRating({ data: {}, state: false })}
       >
-        <Form layout="vertical" form={form}>
+        <Form layout="vertical" form={rateForm}>
           <Form.Item label="Rate" name="rating">
             <Rate count={6} />
           </Form.Item>
           <Form.Item label="Description" name="description">
             <Input.TextArea rows={3} />
+          </Form.Item>
+        </Form>
+      </Modal>
+      <Modal
+        title="Finish Order"
+        centered
+        open={showPrice.state && !showPrice.isReadOnly}
+        okText={"Submit"}
+        onOk={handleSubmitFinishOrder}
+        onCancel={() => {
+          priceForm.resetFields();
+          setShowPrice((prev) => ({ ...prev, data: {}, state: false }));
+        }}
+      >
+        <Form layout="vertical" form={priceForm}>
+          <Form.Item label="Price" name="price">
+            <InputNumber
+              prefix="Rp"
+              min={0}
+              formatter={(value) =>
+                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              }
+              style={{ width: "100%" }}
+            />
+          </Form.Item>
+          <Form.Item label="Description" name="description">
+            <Input.TextArea rows={3} />
+          </Form.Item>
+        </Form>
+      </Modal>
+      <Modal
+        title="Detail Order"
+        centered
+        open={showPrice.state && showPrice.isReadOnly}
+        onCancel={() => {
+          priceForm.resetFields();
+          setShowPrice((prev) => ({ ...prev, data: {}, state: false }));
+        }}
+        footer={[
+          <Button
+            key="back"
+            onClick={() => {
+              priceForm.resetFields();
+              setShowPrice((prev) => ({ ...prev, data: {}, state: false }));
+            }}
+          >
+            Ok
+          </Button>,
+        ]}
+      >
+        <Form layout="vertical" form={priceForm}>
+          <Form.Item label="Price" name="price">
+            <InputNumber
+              prefix="Rp"
+              readOnly
+              formatter={(value) =>
+                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              }
+              style={{ width: "100%" }}
+            />
+          </Form.Item>
+          <Form.Item label="Description" name="description">
+            <Input.TextArea rows={3} readOnly />
           </Form.Item>
         </Form>
       </Modal>

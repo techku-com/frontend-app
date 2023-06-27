@@ -8,7 +8,7 @@ import {
   StarFilled,
   ToolFilled,
 } from "@ant-design/icons";
-import CardImage from "../../components/card/card-image";
+// import CardImage from "../../components/card/card-image";
 import CardInfo from "../../components/card/card-info";
 import { homeArticles, homeStatus } from "../../apis/home-api";
 

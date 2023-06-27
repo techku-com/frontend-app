@@ -44,28 +44,34 @@ export default function ActionModal() {
     form.resetFields();
   };
 
-  const handleFinish = async () => {
+  const handleFinish = () => {
     setIsLoading(true);
-    const values = form.getFieldsValue();
-
-    if (modalState.type === "Login") {
-      try {
-        const {
-          data: { data },
-        } = await usersLogin(values);
-        successMessage();
-        localStorage.setItem("currentUser", JSON.stringify(data));
-      } catch (error) {
-        errorMessage();
-      }
-    } else {
-      try {
-        await usersRegistration({ ...values, role: !!values.role });
-        successMessage();
-      } catch (error) {
-        errorMessage();
-      }
-    }
+    form
+      .validateFields()
+      .then(async (values) => {
+        form.resetFields();
+        if (modalState.type === "Login") {
+          try {
+            const {
+              data: { data },
+            } = await usersLogin(values);
+            successMessage();
+            localStorage.setItem("currentUser", JSON.stringify(data));
+          } catch (error) {
+            errorMessage();
+          }
+        } else {
+          try {
+            await usersRegistration({ ...values, role: !!values.role });
+            successMessage();
+          } catch (error) {
+            errorMessage();
+          }
+        }
+      })
+      .catch((info) => {
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -125,6 +131,10 @@ export default function ActionModal() {
                 {
                   required: true,
                   message: "Please input your phone!",
+                },
+                {
+                  pattern: /^\d+$/,
+                  message: "Phone must numeric",
                 },
               ]}
             >

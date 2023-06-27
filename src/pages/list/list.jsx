@@ -221,7 +221,7 @@ export default function ListPage() {
 
   const handleShowDetail = (data) => {
     priceForm.setFieldsValue({
-      price: data.price,
+      price: `Rp. ${data.price},-`.replace(/\B(?=(\d{3})+(?!\d))/g, "."),
       description: data.description,
     });
     setShowPrice({ state: true, data, isReadOnly: true });
@@ -365,17 +365,10 @@ export default function ListPage() {
       >
         <Form layout="vertical" form={priceForm}>
           <Form.Item label="Price" name="price">
-            <InputNumber
-              prefix="Rp"
-              readOnly
-              formatter={(value) =>
-                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-              }
-              style={{ width: "100%" }}
-            />
+            <Input readOnly style={{ cursor: "default" }} />
           </Form.Item>
           <Form.Item label="Description" name="description">
-            <Input.TextArea rows={3} readOnly />
+            <Input.TextArea rows={3} readOnly style={{ cursor: "default" }} />
           </Form.Item>
         </Form>
       </Modal>

@@ -142,16 +142,12 @@ export default function ListPage() {
       key: "action",
       width: "15%",
       render: (_, record) =>
-        record.status === ORDER_STATUS[3].value ? (
-          <Button onClick={() => handleShowDetail(record)}>Detail</Button>
+        record.status === ORDER_STATUS[1].value ? (
+          <Button onClick={() => handleShowCancelConfirm(record)}>
+            Cancel
+          </Button>
         ) : (
           <Space>
-            <Button
-              disabled={record.status !== ORDER_STATUS[1].value}
-              onClick={() => handleShowCancelConfirm(record)}
-            >
-              Cancel
-            </Button>
             <Button
               disabled={
                 record.status !== ORDER_STATUS[3].value ||
@@ -161,6 +157,7 @@ export default function ListPage() {
             >
               Rate
             </Button>
+            <Button onClick={() => handleShowDetail(record)}>Detail</Button>
           </Space>
         ),
     },
